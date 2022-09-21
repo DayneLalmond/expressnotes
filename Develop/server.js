@@ -3,8 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const pulls = require('./db/db.json');
 
+
 const app = express();
 const PORT = 3001;
+
+require('./routes/apiRoutes')(app)
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -12,35 +15,64 @@ app.use(express.json());
 // extended = true because it keeps the data type instead of reading it only as a string
 app.use(express.urlencoded({ extended: true }))
 
-// app.get('/', (req, res) => {
-//     res.send('/notes');
-//   });
-
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/notes.html'))
-    // to send just a P tag it will send this
-    // res.send('<p>TESTING THIS OBJECT</p>')
 })
+
+// Fallback route
+app.get('*', (req, res) =>
+    res.send('<h1>404</h1><a href="http://localhost:3001"><button>Home</button></a>'
+    ));
+//=======================================
+
+
+// app.get('/notes/db/db.json', (req, res) => {
+//     res.status(200).json(`${req.method}`)
+// })
+
+// Destruct the note variables
+app.post('/api/notes', (req, res) => {
+
+const { noteTitle, noteText } = req.body
+
+        const addedNote = {
+            noteTitle,
+            noteText
+        }
+
+        readAndAppend(addedNote, './db/db.json');
+    });
+
+//         fs.readFile('./db/db.json', 'utf8', (err, data) => {
+//             if (err) {
+//                 console.error(err);
+//             } else {
+//                 const savedNote = JSON.parse(data);
+
+//                 savedNote.push(addedNote);
+
+
+//                 fs.writeFile('./db/db.json',
+//                     JSON.stringify(savedNote, null, 4),
+//                     (writeErr) =>
+//                         writeErr
+//                             ? console.error(writeErr)
+//                             : console.info('Successfully updated notes!')
+//                 )
+//             }
+//         });
+
+//         const response = {
+//             status: 'success',
+//             body: addedNote,
+//         };
+
+//         console.log(response);
+//         res.status(201).json(response);
+//     } else {
+//         res.status(500).json('Error in posting note!');
+// }});
 
 app.listen(PORT, () =>
     console.log(`App listening at http://localhost:${PORT}`)
 );
-
-// Fallback route
-app.get('*', (req, res) =>
-res.send('<h1>404</h1><a href="http://localhost:3001"><button>Home</button></a>'
-));
-//=======================================
-
-// Here i need a get method to get the data
-// something like this 
-app.get('/notes', (req, res) => res.json(pulls));
-
-// post method for creating notes and saving on the request body
-// app.post('/notes', (req, res) => {
-//     console.info(`${req.method} request made`);
-//     // res.json(note)
-
-//     let response;
-
-// });

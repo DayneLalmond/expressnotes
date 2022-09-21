@@ -1,16 +1,10 @@
-const express = require('express');
+const fs = require('fs')
 
-const router = express.Router();
-
-router
-    .route('/notes')
-    .get('/notes', (req, res) => {console.info(`${req.method} request made`)})    
-
-    .post('/notes/:id', (req, res) => {console.info(`${req.method} request made`)
+module.exports = (app) => {
+    app.get('/api/notes', function (req, res) {
+        fs.readFile('./db/db.json', 'utf8', function (err, data) {
+            if (err) throw err
+            res.send(data)
+        })
     })
-
-module.exports = router
-
-// router.get('/notes', (req, res) => {
-//     let savedNotes = notes;
-//     res.json(savedNotes)
+}
