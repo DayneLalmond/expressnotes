@@ -37,10 +37,10 @@ res.send('<h1>404</h1><a href="http://localhost:3001"><button>Home</button></a>'
 app.get('/notes', (req, res) => res.json(pulls));
 
 // post method for creating notes and saving on the request body
-app.post('/notes', (req, res) => {
-    console.info(`${req.method} request made`);
-    // res.json(note)
+// app.post('/notes', (req, res) => {
+//     console.info(`${req.method} request made`);
+//     // res.json(note)
 
-    let response;
+//     let response;
 
-});
+// });
