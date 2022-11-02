@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const pulls = require('./db/db.json');
+const uuid = require('./db/uuid');
 
 
 const app = express();
@@ -25,18 +25,36 @@ app.get('*', (req, res) =>
     ));
 //=======================================
 
-// Destruct the note variables
-app.post('/api/notes', (req, res) => {
+// Post route to add notes with the uuid included
+app.post('/api/notes', function (req, res) {
 
-const { noteTitle, noteText } = req.body
+    let notes = fs.readFileSync('./db/db.json', 'utf8')
+    notes = JSON.parse(notes)
 
-        const addedNote = {
-            noteTitle,
-            noteText
-        }
+    const { title, text } = req.body
+    const addedNote = {
+        id: uuid(),
+        title: title,
+        text: text
+    }
+    notes.push(addedNote)
+    fs.writeFileSync('./db/db.json', JSON.stringify(notes))
+    //res.end will end the request
+    res.end()
+})
 
-        readAndAppend(addedNote, './db/db.json');
-    });
+app.delete('/api/notes/:id', function (req, res) {
+    let notes = fs.readFileSync('./db/db.json', 'utf8')
+    notes = JSON.parse(notes)
+
+    for (let i = 0; i < notes.length; i++) {
+        //only problem is it deletes all the notes
+    notes.splice(i)
+    };
+    
+    fs.writeFileSync('./db/db.json', JSON.stringify(notes))
+    res.end()
+});
 
 app.listen(PORT, () =>
     console.log(`App listening at http://localhost:${PORT}`)
