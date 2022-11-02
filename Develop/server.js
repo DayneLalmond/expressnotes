@@ -5,7 +5,7 @@ const uuid = require('./db/uuid');
 
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 require('./routes/apiRoutes')(app)
 
@@ -21,8 +21,7 @@ app.get('/notes', (req, res) => {
 
 // Fallback route
 app.get('*', (req, res) =>
-    res.send('<h1>404</h1><a href="http://localhost:3001"><button>Home</button></a>'
-    ));
+    res.sendFile(path.join(__dirname, 'public/404.html')));
 //=======================================
 
 // Post route to add notes with the uuid included
